@@ -65,6 +65,15 @@ function Reservar() {
 
   const [pay, setPay] = useState({ number: "", name: "", expiry: "", cvv: "" });
   const [payMethod, setPayMethod] = useState<"card" | "paypal">("card");
+  const [invoiceType, setInvoiceType] = useState<"Boleta" | "Factura">("Boleta");
+  const [ruc, setRuc] = useState("");
+
+  const handleInvoiceTypeChange = (v: "Boleta" | "Factura") => {
+    setInvoiceType(v);
+    if (v === "Boleta") setRuc("");
+  };
+
+  const rucValid = invoiceType === "Boleta" || /^\d{11}$/.test(ruc);
 
   const sendConfirmationEmail = (method: "Tarjeta de crédito" | "PayPal") => {
     const params = {
@@ -91,6 +100,8 @@ function Reservar() {
       emergency_name: form.emergencyName,
       emergency_phone: form.emergencyPhone,
       payment_method: method,
+      invoice_type: invoiceType,
+      ruc: invoiceType === "Factura" ? ruc : "",
       price_per_night: fmtUSD(l!.price),
       base_price: fmtUSD(cost.base),
       cleaning_fee: fmtUSD(cost.cleaning),
@@ -192,6 +203,7 @@ function Reservar() {
     if (!pay.name.trim()) return toast.error(t("errCardHolder"));
     if (pay.expiry.length < 5) return toast.error(t("errExpiryInvalid"));
     if (pay.cvv.length < 3) return toast.error(t("errCvvInvalid"));
+    if (!rucValid) return toast.error(t("errRucInvalid"));
     setProcessing(true);
     setTimeout(() => {
       setProcessing(false);
@@ -438,6 +450,35 @@ function Reservar() {
                 </button>
               </div>
 
+              <div className="rounded-xl border border-[#E8E0D2] bg-[#FAF8F5] p-4">
+                <h3 className="text-sm font-medium">{t("invoiceTypeLabel")}</h3>
+                <div className="mt-3 flex gap-5">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="radio" name="invoiceType" checked={invoiceType === "Boleta"} onChange={() => handleInvoiceTypeChange("Boleta")} />
+                    {t("invoiceBoleta")}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="radio" name="invoiceType" checked={invoiceType === "Factura"} onChange={() => handleInvoiceTypeChange("Factura")} />
+                    {t("invoiceFactura")}
+                  </label>
+                </div>
+                {invoiceType === "Factura" && (
+                  <div className="mt-3 max-w-xs">
+                    <Field label={t("rucLabel")}>
+                      <input
+                        required
+                        inputMode="numeric"
+                        maxLength={11}
+                        value={ruc}
+                        onChange={(e) => setRuc(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                        placeholder="20123456789"
+                        className="input"
+                      />
+                    </Field>
+                  </div>
+                )}
+              </div>
+
               {payMethod === "card" && (
                 <form onSubmit={submitPayment} className="space-y-4">
                   <Field label={t("cardNumberLabel")}>
@@ -498,6 +539,7 @@ function Reservar() {
                   </div>
                   <button type="button" disabled={processing}
                     onClick={() => {
+                      if (!rucValid) { toast.error(t("errRucInvalid")); return; }
                       setProcessing(true);
                       setTimeout(() => {
                         setProcessing(false);
@@ -528,7 +570,7 @@ function Reservar() {
                 </div>
               )}
             </div>
-            <SummaryAside l={l} cost={cost} guests={form.guests} dates={`${form.checkIn} → ${form.checkOut}`} t={t} />
+            <SummaryAside l={l} cost={cost} guests={form.guests} dates={`${form.checkIn} → ${form.checkOut}`} t={t} invoiceType={invoiceType} ruc={ruc} />
           </motion.div>
         )}
 
@@ -552,6 +594,10 @@ function Reservar() {
               <Row label={t("arrival")} value={form.checkIn} />
               <Row label={t("departure")} value={form.checkOut} />
               <Row label={t("nightsCount")} value={String(cost.nights)} />
+              <Row
+                label={t("invoiceTypeLabel")}
+                value={invoiceType === "Factura" ? `${t("invoiceFactura")} · RUC ${ruc}` : t("invoiceBoleta")}
+              />
               <div className="my-2 border-t border-[#E8E0D2]" />
               <Row label={t("totalPaid")} value={fmtUSD(cost.total)} bold />
             </div>
@@ -631,13 +677,15 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
 }
 
 function SummaryAside({
-  l, cost, guests, dates, t,
+  l, cost, guests, dates, t, invoiceType, ruc,
 }: {
   l: ReturnType<typeof getListing> & object;
   cost: ReturnType<typeof computeCost>;
   guests: number;
   dates?: string;
   t: (k: string) => string;
+  invoiceType?: "Boleta" | "Factura";
+  ruc?: string;
 }) {
   return (
     <aside className="h-fit rounded-2xl border border-[#E8E0D2] bg-[#F5F1EB] p-5">
@@ -652,6 +700,12 @@ function SummaryAside({
       <p className="mt-1 text-[11px] text-[#1F1F1F]/60">
         {cost.nights} {cost.nights === 1 ? t("nightCount") : t("nightsCount")} · {guests} {guests > 1 ? t("guestPlural") : t("guestSingular")}
       </p>
+      {invoiceType && (
+        <p className="mt-1 text-[11px] text-[#1F1F1F]/60">
+          {t("invoiceTypeLabel")}: <span className="font-medium text-[#1F1F1F]">{invoiceType === "Factura" ? t("invoiceFactura") : t("invoiceBoleta")}</span>
+          {invoiceType === "Factura" && ruc ? ` · RUC ${ruc}` : ""}
+        </p>
+      )}
       <div className="mt-4 space-y-2 text-sm">
         <Row label={`${fmtUSD(l.price)} × ${cost.nights}`} value={fmtUSD(cost.base)} />
         <Row label={t("cleaningShort")} value={fmtUSD(cost.cleaning)} />

@@ -93,7 +93,7 @@ export const listings: Listing[] = [
   {
     id: "4",
     name: "Departamento Surco Garden",
-    district: "Surco", city: "Lima", address: "Av. Primavera 1320",
+    district: "Santiago de Surco", city: "Lima", address: "Av. Primavera 1320",
     price: 680,
     rating: 4.7, reviews: 71, bedrooms: 2, bathrooms: 2, guests: 4, area: 88,
     badge: "Disponible", type: "2 habitaciones",
