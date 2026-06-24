@@ -44,6 +44,9 @@ export function Navbar() {
           <Link to="/explorar" className="hover:text-[#B08A4A]" activeProps={{ className: "text-[#B08A4A]" }}>
             {t("explore")}
           </Link>
+          <Link to="/quienes-somos" className="hover:text-[#B08A4A]" activeProps={{ className: "text-[#B08A4A]" }}>
+            {t("aboutUs")}
+          </Link>
           <button onClick={handleEmergencies} className="flex items-center gap-1.5 hover:text-[#B08A4A]">
             <LifeBuoy className="h-3.5 w-3.5" /> {t("emergencies")}
           </button>
@@ -124,6 +127,7 @@ export function Navbar() {
         <div className="border-t border-[#E8E0D2] bg-[#FAF8F5] px-5 py-4 md:hidden">
           <div className="flex flex-col gap-2 text-sm">
             <Link to="/explorar" onClick={() => setOpen(false)} className="py-1.5">{t("explore")}</Link>
+            <Link to="/quienes-somos" onClick={() => setOpen(false)} className="py-1.5">{t("aboutUs")}</Link>
             <button onClick={() => { setOpen(false); handleEmergencies(); }} className="py-1.5 text-left">{t("emergencies247")}</button>
             <div className="flex w-fit overflow-hidden rounded-full border border-[#B08A4A] text-[11px] font-semibold">
               <button onClick={() => setLanguage("es")} className={`px-2.5 py-1 transition-colors ${language === "es" ? "bg-[#B08A4A] text-white" : "text-[#B08A4A]"}`}>ES</button>

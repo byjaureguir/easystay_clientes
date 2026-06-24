@@ -7,6 +7,7 @@ export type Lang = "es" | "en";
 const es = {
   // Nav
   explore: "Explorar",
+  aboutUs: "Sobre Nosotros",
   emergencies: "Emergencias",
   emergencies247: "Emergencias 24/7",
   signIn: "Ingresar",
@@ -294,6 +295,11 @@ const es = {
   emergCard8Desc: "Llama a SAMU (106) de inmediato. Easy Stay coordina con el edificio.",
   emergCard8Action: "Llamar SAMU",
   // Quiénes somos
+  qsHeroTitle: "Una nueva forma de alojarte en Lima",
+  qsHeroText: "Easy Stay es una plataforma premium de alojamiento de corta estadía en Lima, pensada para viajeros de negocios y turistas que buscan comodidad, confianza y un servicio sin fricciones. Gestionamos cada inmueble directamente —sin intermediarios, sin tratos con propietarios desconocidos y sin sorpresas— para que tu única preocupación sea disfrutar tu estadía.",
+  qsAudienceTitle: "¿Para quién es Easy Stay?",
+  qsAudienceText: "Trabajamos con ejecutivos en viaje de negocios, turistas nacionales e internacionales, y profesionales en relocalización temporal que necesitan un espacio cómodo y confiable desde la primera noche, sin trámites bancarios ni negociaciones con propietarios.",
+  qsValuesTitle: "Por qué elegir Easy Stay",
   qsMissionTitle: "Nuestra misión",
   qsMissionText1: "Easy Stay nació de una necesidad real: encontrar alojamiento temporal de calidad en Lima sin los inconvenientes del mercado tradicional. Sin garantías bancarias imposibles, sin tratos directos con propietarios desconocidos, sin sorpresas.",
   qsMissionText2: "Somos el único punto de contacto de nuestros huéspedes. Gestionamos cada inmueble directamente, garantizando estándares premium en cada estadía.",
@@ -403,6 +409,7 @@ const es = {
 
 const en: typeof es = {
   explore: "Explore",
+  aboutUs: "About Us",
   emergencies: "Emergencies",
   emergencies247: "24/7 Emergencies",
   signIn: "Sign in",
@@ -683,6 +690,11 @@ const en: typeof es = {
   emergCard8Desc: "Call SAMU (106) immediately. Easy Stay coordinates with the building.",
   emergCard8Action: "Call SAMU",
   // About us
+  qsHeroTitle: "A new way to stay in Lima",
+  qsHeroText: "Easy Stay is a premium short-stay accommodation platform in Lima, built for business travelers and tourists looking for comfort, trust and a frictionless experience. We manage every property directly —no middlemen, no dealing with unknown owners, no surprises— so your only concern is enjoying your stay.",
+  qsAudienceTitle: "Who is Easy Stay for?",
+  qsAudienceText: "We work with executives on business trips, domestic and international tourists, and professionals on temporary relocation who need a comfortable, reliable space from night one, with no bank paperwork or owner negotiations.",
+  qsValuesTitle: "Why choose Easy Stay",
   qsMissionTitle: "Our mission",
   qsMissionText1: "Easy Stay was born from a real need: finding quality temporary accommodation in Lima without the hassles of the traditional market. No impossible bank guarantees, no direct dealings with unknown owners, no surprises.",
   qsMissionText2: "We are the only point of contact for our guests. We manage every property directly, guaranteeing premium standards in every stay.",

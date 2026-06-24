@@ -39,7 +39,7 @@ export function Footer() {
   };
 
   const company = [
-    { label: t("footerAboutUs"), to: "/" as const },
+    { label: t("footerAboutUs"), to: "/quienes-somos" as const },
     { label: t("footerCareers"), key: "careers" as const },
     { label: t("footerPress"), key: "press" as const },
     { label: t("footerTerms"), to: "/terminos" as const },
