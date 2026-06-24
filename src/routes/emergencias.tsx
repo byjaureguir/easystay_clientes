@@ -15,7 +15,7 @@ export const Route = createFileRoute("/emergencias")({
 function Emergencias() {
   const [desc, setDesc] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const { isLoggedIn, currentUser, reservations } = useAuth();
+  const { isLoggedIn, currentUser, reservations, addTicket } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [cat, setCat] = useState(t("emergCatMaintenance"));
@@ -57,6 +57,12 @@ function Emergencias() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!desc.trim()) { toast.error(t("emergDescError")); return; }
+    addTicket({
+      id: `T-${Date.now().toString().slice(-6)}`,
+      title: cat,
+      status: "En proceso",
+      createdAt: new Date().toISOString(),
+    });
     toast.success(t("emergTicketSuccess"));
     setDesc(""); setFile(null);
   };

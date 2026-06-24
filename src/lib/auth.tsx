@@ -27,26 +27,38 @@ export type Reservation = {
   createdAt: string;
 };
 
+export type SupportTicket = {
+  id: string;
+  userEmail: string;
+  title: string;
+  status: "En proceso" | "Resuelto";
+  createdAt: string;
+};
+
 type AuthCtx = {
   isLoggedIn: boolean;
   currentUser: AuthUser | null;
   reservations: Reservation[];
+  tickets: SupportTicket[];
   login: (u: AuthUser) => void;
   loginWithCredentials: (email: string, password: string) => boolean;
   register: (u: AuthUser & { password: string }) => void;
   logout: () => void;
   addReservation: (r: Omit<Reservation, "userEmail">) => void;
+  addTicket: (t: Omit<SupportTicket, "userEmail">) => void;
   updateUser: (u: Partial<AuthUser> & { password?: string }) => void;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
 const USER_KEY = "easystay_user";
 const RES_KEY = "easystay_reservations";
+const TICKETS_KEY = "easystay_tickets";
 const USERS_KEY = "easystay_users";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
 
   const loadReservationsFor = (email: string | null): Reservation[] => {
     if (!email) return [];
@@ -58,12 +70,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loadTicketsFor = (email: string | null): SupportTicket[] => {
+    if (!email) return [];
+    try {
+      const all = JSON.parse(localStorage.getItem(TICKETS_KEY) || "[]") as SupportTicket[];
+      return all.filter((t) => t.userEmail === email);
+    } catch {
+      return [];
+    }
+  };
+
   useEffect(() => {
     try {
       const u = localStorage.getItem(USER_KEY);
       const parsed = u ? (JSON.parse(u) as AuthUser) : null;
       if (parsed) setCurrentUser(parsed);
       setReservations(loadReservationsFor(parsed?.email ?? null));
+      setTickets(loadTicketsFor(parsed?.email ?? null));
     } catch {}
   }, []);
 
@@ -72,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (u) localStorage.setItem(USER_KEY, JSON.stringify(u));
     else localStorage.removeItem(USER_KEY);
     setReservations(loadReservationsFor(u?.email ?? null));
+    setTickets(loadTicketsFor(u?.email ?? null));
   };
 
   const login = (u: AuthUser) => persistUser(u);
@@ -112,6 +136,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setReservations((prev) => [tagged, ...prev]);
   };
 
+  const addTicket = (t: Omit<SupportTicket, "userEmail">) => {
+    if (!currentUser) return;
+    const tagged: SupportTicket = { ...t, userEmail: currentUser.email };
+    try {
+      const all = JSON.parse(localStorage.getItem(TICKETS_KEY) || "[]") as SupportTicket[];
+      localStorage.setItem(TICKETS_KEY, JSON.stringify([tagged, ...all]));
+    } catch {}
+    setTickets((prev) => [tagged, ...prev]);
+  };
+
   const updateUser = (u: Partial<AuthUser> & { password?: string }) => {
     if (!currentUser) return;
     const { password, ...rest } = u;
@@ -133,11 +167,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoggedIn: !!currentUser,
         currentUser,
         reservations,
+        tickets,
         login,
         loginWithCredentials,
         register,
         logout,
         addReservation,
+        addTicket,
         updateUser,
       }}
     >

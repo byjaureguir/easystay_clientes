@@ -22,7 +22,7 @@ type Tab = "reservas" | "pagos" | "soporte" | "config";
 function Cuenta() {
   const [tab, setTab] = useState<Tab>("reservas");
   const [editOpen, setEditOpen] = useState(false);
-  const { isLoggedIn, currentUser, reservations: userReservations, logout } = useAuth();
+  const { isLoggedIn, currentUser, reservations: userReservations, tickets: userTickets, addTicket, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
@@ -45,11 +45,17 @@ function Cuenta() {
   const activeReservation = userReservations.find((r) => r.status === "Activa");
   const activeCount = userReservations.filter((r) => r.status === "Activa").length;
   const totalNights = userReservations.reduce((s, r) => s + r.nights, 0);
+  const openTicketsCount = userTickets.filter((t) => t.status !== "Resuelto").length;
 
-  const tickets = [
-    { id: "T-1042", title: t("emergCard6Title"), status: t("ticketInProcess"), date: "Hoy" },
-    { id: "T-1038", title: "WiFi", status: t("ticketResolved"), date: "Hace 3 días" },
-  ];
+  const handleNewTicket = () => {
+    addTicket({
+      id: `T-${Date.now().toString().slice(-6)}`,
+      title: t("newTicket"),
+      status: "En proceso",
+      createdAt: new Date().toISOString(),
+    });
+    toast.success(t("ticketCreated"));
+  };
 
   return (
     <PageShell>
@@ -82,7 +88,7 @@ function Cuenta() {
           {[
             { label: t("activeBookings"), value: String(activeCount) },
             { label: t("nightsBooked"), value: String(totalNights) },
-            { label: t("openTickets"), value: "0" },
+            { label: t("openTickets"), value: String(openTicketsCount) },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-[#E8E0D2] bg-white p-5">
               <p className="text-xs text-[#1F1F1F]/60">{s.label}</p>
@@ -279,23 +285,31 @@ function Cuenta() {
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-lora text-lg">{t("supportTicketsTitle")}</h3>
-                <button onClick={() => toast.success(t("ticketCreated"))} className="flex items-center gap-2 rounded-full bg-[#B08A4A] px-4 py-2 text-xs font-medium text-white hover:bg-[#9a7740]">
+                <button onClick={handleNewTicket} className="flex items-center gap-2 rounded-full bg-[#B08A4A] px-4 py-2 text-xs font-medium text-white hover:bg-[#9a7740]">
                   <Plus className="h-3.5 w-3.5" /> {t("newTicket")}
                 </button>
               </div>
-              <div className="mt-4 space-y-2">
-                {tickets.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-xl border border-[#E8E0D2] bg-white px-4 py-3">
-                    <div>
-                      <p className="text-sm font-medium">{item.title}</p>
-                      <p className="text-xs text-[#1F1F1F]/60">{item.id} · {item.date}</p>
+              {userTickets.length === 0 ? (
+                <div className="mt-4 rounded-2xl border border-dashed border-[#E8E0D2] p-10 text-center">
+                  <Headphones className="mx-auto h-10 w-10 text-[#B08A4A]" strokeWidth={1} />
+                  <p className="mt-4 font-lora text-lg text-[#1F1F1F]">{t("noTickets")}</p>
+                  <p className="mt-2 text-sm text-[#888]">{t("noTicketsBody")}</p>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-2">
+                  {userTickets.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between rounded-xl border border-[#E8E0D2] bg-white px-4 py-3">
+                      <div>
+                        <p className="text-sm font-medium">{item.title}</p>
+                        <p className="text-xs text-[#1F1F1F]/60">{item.id} · {item.createdAt.slice(0, 10)}</p>
+                      </div>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${item.status === "Resuelto" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                        {item.status === "Resuelto" ? t("ticketResolved") : t("ticketInProcess")}
+                      </span>
                     </div>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${item.status === t("ticketResolved") ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                      {item.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
