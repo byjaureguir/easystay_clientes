@@ -34,7 +34,7 @@ function Property() {
   const { id } = useParams({ from: "/property/$id" });
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const { reservations } = useAuth();
+  const { isLoggedIn, reservations } = useAuth();
   const l = getListing(id);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [guests, setGuests] = useState(1);
@@ -72,7 +72,7 @@ function Property() {
 
   const verifyItems = [t("verifyItem1"), t("verifyItem2"), t("verifyItem3"), t("verifyItem4"), t("verifyItem5")];
 
-  const hasConfirmedBooking = reservations.some(
+  const hasConfirmedBooking = isLoggedIn && reservations.some(
     (r) => r.listingId === (l?.id ?? "") && (r.status === "Activa" || r.status === "Finalizada" || r.status === "En revisión")
   );
 

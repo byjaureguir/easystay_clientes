@@ -13,6 +13,7 @@ export type AuthUser = {
 export type Reservation = {
   id: string;
   code: string;
+  userEmail: string;
   listingId: string;
   listingName: string;
   district: string;
@@ -34,7 +35,7 @@ type AuthCtx = {
   loginWithCredentials: (email: string, password: string) => boolean;
   register: (u: AuthUser & { password: string }) => void;
   logout: () => void;
-  addReservation: (r: Reservation) => void;
+  addReservation: (r: Omit<Reservation, "userEmail">) => void;
   updateUser: (u: Partial<AuthUser> & { password?: string }) => void;
 };
 
@@ -47,12 +48,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
+  const loadReservationsFor = (email: string | null): Reservation[] => {
+    if (!email) return [];
+    try {
+      const all = JSON.parse(localStorage.getItem(RES_KEY) || "[]") as Reservation[];
+      return all.filter((r) => r.userEmail === email);
+    } catch {
+      return [];
+    }
+  };
+
   useEffect(() => {
     try {
       const u = localStorage.getItem(USER_KEY);
-      const r = localStorage.getItem(RES_KEY);
-      if (u) setCurrentUser(JSON.parse(u));
-      if (r) setReservations(JSON.parse(r));
+      const parsed = u ? (JSON.parse(u) as AuthUser) : null;
+      if (parsed) setCurrentUser(parsed);
+      setReservations(loadReservationsFor(parsed?.email ?? null));
     } catch {}
   }, []);
 
@@ -60,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentUser(u);
     if (u) localStorage.setItem(USER_KEY, JSON.stringify(u));
     else localStorage.removeItem(USER_KEY);
+    setReservations(loadReservationsFor(u?.email ?? null));
   };
 
   const login = (u: AuthUser) => persistUser(u);
@@ -90,12 +102,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => persistUser(null);
 
-  const addReservation = (r: Reservation) => {
-    setReservations((prev) => {
-      const next = [r, ...prev];
-      localStorage.setItem(RES_KEY, JSON.stringify(next));
-      return next;
-    });
+  const addReservation = (r: Omit<Reservation, "userEmail">) => {
+    if (!currentUser) return;
+    const tagged: Reservation = { ...r, userEmail: currentUser.email };
+    try {
+      const all = JSON.parse(localStorage.getItem(RES_KEY) || "[]") as Reservation[];
+      localStorage.setItem(RES_KEY, JSON.stringify([tagged, ...all]));
+    } catch {}
+    setReservations((prev) => [tagged, ...prev]);
   };
 
   const updateUser = (u: Partial<AuthUser> & { password?: string }) => {
