@@ -1,0 +1,41 @@
+
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: #FAF8F5;
+  --color-foreground: #1F1F1F;
+  --color-primary: #B08A4A;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #D8C9B8;
+  --color-muted: #F5F1EB;
+  --color-border: #E8E0D2;
+  --font-lora: "Lora", serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
+:root {
+  --radius: 0.75rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body, button, input, select, textarea, label, p, span, a, div, li, td, th {
+  font-family: "Poppins", system-ui, sans-serif;
+}
+
+body {
+  background-color: #FAF8F5;
+  color: #1F1F1F;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-lora {
+  font-family: "Lora", serif;
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
