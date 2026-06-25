@@ -7,7 +7,7 @@ import { Footer } from "../components/Footer";
 export const Route = createFileRoute("/terminos")({
   head: () => ({
     meta: [
-      { title: "Términos y Condiciones — Easy Stay" },
+      { title: "Términos y condiciones — Easy Stay" },
       { name: "description", content: "Términos y condiciones de uso de la plataforma Easy Stay." },
     ],
   }),
@@ -45,7 +45,7 @@ function Terminos() {
 
       <article className="mx-auto max-w-4xl px-5 py-10">
         <p className="font-lora text-sm tracking-[0.22em] text-[#B08A4A]">EASY STAY</p>
-        <h1 className="mt-2 font-lora text-4xl text-[#1F1F1F] md:text-5xl">Términos y Condiciones</h1>
+        <h1 className="mt-2 font-lora text-4xl text-[#1F1F1F] md:text-5xl">Términos y condiciones</h1>
         <p className="mt-2 text-xs text-[#1F1F1F]/60">Última actualización: mayo 2026</p>
         <p className="mt-6 text-sm leading-relaxed text-[#1F1F1F]/80">
           Al acceder y utilizar la plataforma Easy Stay, aceptas los siguientes términos y condiciones. Te recomendamos leerlos detenidamente antes de realizar cualquier reserva.

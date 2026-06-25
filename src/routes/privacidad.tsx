@@ -7,7 +7,7 @@ import { Footer } from "../components/Footer";
 export const Route = createFileRoute("/privacidad")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidad — Easy Stay" },
+      { title: "Política de privacidad — Easy Stay" },
       { name: "description", content: "Cómo Easy Stay recopila, usa y protege tus datos personales." },
     ],
   }),
@@ -45,7 +45,7 @@ function Privacidad() {
 
       <article className="mx-auto max-w-4xl px-5 py-10">
         <p className="font-lora text-sm tracking-[0.22em] text-[#B08A4A]">EASY STAY</p>
-        <h1 className="mt-2 font-lora text-4xl text-[#1F1F1F] md:text-5xl">Política de Privacidad</h1>
+        <h1 className="mt-2 font-lora text-4xl text-[#1F1F1F] md:text-5xl">Política de privacidad</h1>
         <p className="mt-2 text-xs text-[#1F1F1F]/60">Última actualización: mayo 2026</p>
         <p className="mt-6 text-sm leading-relaxed text-[#1F1F1F]/80">
           Easy Stay está comprometida con la protección de tus datos personales. Esta política describe cómo recopilamos, usamos y protegemos tu información, en cumplimiento de la Ley N°29733 de Protección de Datos Personales del Perú.
